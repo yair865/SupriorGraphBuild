@@ -1,12 +1,11 @@
 #pragma once
 #include "DirectedSimpleGraph.h"
 
-typedef int vertex;
-
 class GraphUtils
 {
 public:
 	static DirectedSimpleGraph* GenerateSuperiorGraph(DirectedSimpleGraph* i_GraphToCreateFrom);
+	static DirectedSimpleGraph* CreateTransposedGraph(DirectedSimpleGraph* i_GraphToTranspose);
 
 private:
 	const enum eColors {WHITE, GRAY, BLACK};

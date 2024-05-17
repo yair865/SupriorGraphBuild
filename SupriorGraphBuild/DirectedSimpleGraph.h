@@ -16,6 +16,7 @@ public:
     //Getters
     int GetNumVertices() const;
     int GetNumEdges() const;
+    vector<list<vertex>> GetAdjacencyVector() const;
     Edge GetEdge(vertex u, vertex v);
     list<vertex> GetAdjList(vertex u);
 
