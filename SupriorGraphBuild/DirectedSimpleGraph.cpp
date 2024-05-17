@@ -59,6 +59,6 @@ list<int> DirectedSimpleGraph::GetAdjList(int u)
 		else
 		{
 			cout << "Vertex doesnt exist!";
-		    return std::list<int>();
+			exit(1);
 		}
 }
