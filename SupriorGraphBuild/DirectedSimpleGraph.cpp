@@ -1,20 +1,23 @@
 #include "DirectedSimpleGraph.h"
-
 using namespace std;
-static DirectedSimpleGraph* MakeEmptyGraph(int n) { return (new DirectedSimpleGraph(n));}
+
+DirectedSimpleGraph* DirectedSimpleGraph::MakeEmptyGraph(int n)
+{ 
+	return (new DirectedSimpleGraph(n));
+}
 
 DirectedSimpleGraph::DirectedSimpleGraph(int n) :numVertices(n), numEdges(0), AdjacencyList(n) {}
 
-bool DirectedSimpleGraph::IsAdjacent(int u, int v)
+bool DirectedSimpleGraph::IsAdjacent(vertex u, vertex v)
 {
 	if (u >= 1 && u <= numVertices && v >= 1 && v <= numVertices) {
-		const std::list<int>& neighbors = AdjacencyList[u - 1];
+		const std::list<vertex>& neighbors = AdjacencyList[u - 1];
 		return std::find(neighbors.begin(), neighbors.end(), v) != neighbors.end();
 	}
 	return false;
 }
 
-void DirectedSimpleGraph::AddEdge(int u, int v)
+void DirectedSimpleGraph::AddEdge(vertex u, vertex v)
 {
 	if (u >= 1 && u <= numVertices && v >= 1 && v <= numVertices && u != v) {
 		if (!IsAdjacent(u, v)) {
@@ -24,7 +27,7 @@ void DirectedSimpleGraph::AddEdge(int u, int v)
 	}
 }
 
-void DirectedSimpleGraph::RemoveEdge(int u, int v)
+void DirectedSimpleGraph::RemoveEdge(vertex u, vertex v)
 {
 	if (u >= 1 && u <= numVertices && v >= 1 && v <= numVertices) {
 		auto& neighbors = AdjacencyList[u - 1];
@@ -40,7 +43,7 @@ int DirectedSimpleGraph::GetNumVertices() const {return numVertices;}
 
 int DirectedSimpleGraph::GetNumEdges() const {return numEdges;}
 
-list<int> DirectedSimpleGraph::GetAdjList(int u)
+list<int> DirectedSimpleGraph::GetAdjList(vertex u)
 {
 	//try
 	//{
