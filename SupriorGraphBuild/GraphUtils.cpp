@@ -1,18 +1,15 @@
 #include "GraphUtils.h"
 using namespace std;
 
-int GraphUtils::s_SuperiorGraphNumberOfVertices = 0;
-int GraphUtils::s_SuperiorGraphNumberOfEdges = 0;
-
-DirectedSimpleGraph* GraphUtils::GenerateSuperiorGraph(DirectedSimpleGraph* i_GraphToCreateFrom)
+DirectedSimpleGraph* GraphUtils::GenerateCondensationGraph(DirectedSimpleGraph* i_GraphToCreateFrom)
 {
 	int numberOfVertices = i_GraphToCreateFrom->GetNumVertices();
 	int numberOfSCC = 0;
-	vector<vertex> verticesRoot(numberOfVertices);
+	vector<vertex> verticesComponent(numberOfVertices);
 	vector<eColors> verticesColor;
-	stack<vertex>* reversedEndList = DFSWithEndListAndParents(i_GraphToCreateFrom, verticesRoot, numberOfSCC);
-	DirectedSimpleGraph* superiorGraphResult = DirectedSimpleGraph::MakeEmptyGraph(numberOfSCC);
-	DirectedSimpleGraph* inputGraphTransposed = CreateTransposedGraph(i_GraphToCreateFrom);
+	DirectedSimpleGraph* condensationGraphResult = DirectedSimpleGraph::MakeEmptyGraph(EMPTY);
+	stack<vertex>* reversedEndList = EndListDFS(i_GraphToCreateFrom);
+	DirectedSimpleGraph* transposedGraph = CreateTransposedGraph(i_GraphToCreateFrom);
 	
 	verticesColor.resize(numberOfVertices, eColors::WHITE);
 	
@@ -22,45 +19,50 @@ DirectedSimpleGraph* GraphUtils::GenerateSuperiorGraph(DirectedSimpleGraph* i_Gr
 		vertex u = reversedEndList->top();
 		reversedEndList->pop();
 
-		if (s_VerticesColorArray[u] == eColors::WHITE)
+		if (verticesColor[u] == eColors::WHITE)
 		{
-			visitSCCDFS(u, verticesColor, verticesRoot, *superiorGraphResult);
+			condensationGraphResult->AddSingleVertex();
+			verticesComponent[u] = numberOfSCC;
+			visitSCCDFS(u, transposedGraph, verticesColor, numberOfSCC, verticesComponent, *condensationGraphResult);
+			numberOfSCC++;
 		}
 	}
 }
 
-void GraphUtils::visitSCCDFS(vertex u, vector<eColors>& i_VerticesColor, vector<vertex>& i_VerticesRoot, DirectedSimpleGraph& io_SuperiorGraphInBuild)
+void GraphUtils::visitSCCDFS(vertex u, DirectedSimpleGraph* i_TransposedGraph, vector<eColors>& i_VerticesColor, vertex i_CurrentComponent, 
+								vector<vertex>& i_VerticesComponentsBelonging, DirectedSimpleGraph& io_SuperiorGraphInBuild)
 {
 	i_VerticesColor[u] = eColors::GRAY;
-	list<vertex> inputVertexAdjacentList = s_CurrentGraph->GetAdjList(u);
+	list<vertex> inputVertexAdjacentList = i_TransposedGraph->GetAdjList(u);
 	list<vertex> currentSCCAdjacentList;
+	vertex u_Component, v_Component;
 
 	for (vertex v : inputVertexAdjacentList)
 	{
 		if (i_VerticesColor[v] == eColors::WHITE)
 		{
-			visitSCCDFS(v, i_VerticesColor, i_VerticesRoot, io_SuperiorGraphInBuild);
+			i_VerticesComponentsBelonging[v] = i_CurrentComponent;
+			visitSCCDFS(v, i_TransposedGraph, i_VerticesColor, i_CurrentComponent, i_VerticesComponentsBelonging, io_SuperiorGraphInBuild);
 		}
-		else if (i_VerticesColor[v] == eColors::BLACK)
+		else if ((i_VerticesColor[v] == eColors::BLACK) && (i_VerticesComponentsBelonging[u] != i_VerticesComponentsBelonging[v]))
 		{
-			if (i_VerticesRoot[u] != i_VerticesRoot[v])
-			{
-				if ()
-				{
+			u_Component = i_VerticesComponentsBelonging[u];
+			v_Component = i_VerticesComponentsBelonging[v];
 
-				}
+			if (io_SuperiorGraphInBuild.GetAdjList(v).back() != u_Component)
+			{
+				io_SuperiorGraphInBuild.AddEdge(v_Component, u_Component);
 			}
 		}
 	}
 
 	i_VerticesColor[u] = eColors::BLACK;
-	i_ResultEndList.push(u);
 }
 
-stack<vertex>* GraphUtils::DFSWithEndListAndParents(DirectedSimpleGraph* i_GraphToActivateDFSOn, vector<vertex>& o_VerticesRoot, int& o_NumberOfSCC)
+stack<vertex>* GraphUtils::EndListDFS(DirectedSimpleGraph* i_GraphToActivateOn)
 {
 	vector<eColors> verticesColor;
-	int numberOfVertices = i_GraphToActivateDFSOn->GetNumVertices();
+	int numberOfVertices = i_GraphToActivateOn->GetNumVertices();
 	stack<vertex>* endListResult = new stack<vertex>();
 
 	// Initializing
@@ -71,26 +73,24 @@ stack<vertex>* GraphUtils::DFSWithEndListAndParents(DirectedSimpleGraph* i_Graph
 	{
 		if (verticesColor[u] == eColors::WHITE)
 		{
-			o_NumberOfSCC++;
-			visitDFSEndListParents(u, verticesColor, *endListResult, o_VerticesRoot, u);
+			visitEndListDFS(u, i_GraphToActivateOn, verticesColor, *endListResult);
 		}
 	}
 
 	return endListResult;
 }
 
-void GraphUtils::visitDFSEndListParents(vertex u, vector<eColors>& i_VerticesColor, stack<vertex>& i_ResultEndList, vector<vertex>& o_VerticesRoot, vertex i_CurrentRoot)
+void GraphUtils::visitEndListDFS(vertex u, DirectedSimpleGraph* i_GraphToActivateOn, vector<eColors>& i_VerticesColor, stack<vertex>& i_ResultEndList)
 {
-	list<vertex> inputVertexAdjacentList = s_CurrentGraph->GetAdjList(u);
+	list<vertex> inputVertexAdjacentList = i_GraphToActivateOn->GetAdjList(u);
 
 	i_VerticesColor[u] = eColors::GRAY;
-	o_VerticesRoot[u] = i_CurrentRoot;
 
 	for (vertex v : inputVertexAdjacentList)
 	{
 		if (i_VerticesColor[v] == eColors::WHITE)
 		{
-			visitDFSEndListParents(v, i_VerticesColor, i_ResultEndList, o_VerticesRoot, i_CurrentRoot);
+			visitEndListDFS(v, i_GraphToActivateOn, i_VerticesColor, i_ResultEndList);
 		}
 	}
 

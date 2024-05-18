@@ -129,14 +129,12 @@
   <ItemGroup>
     <ClCompile Include="ConsoleUI.cpp" />
     <ClCompile Include="DirectedSimpleGraph.cpp" />
-    <ClCompile Include="Edge.cpp" />
     <ClCompile Include="GraphUtils.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleUI.h" />
     <ClInclude Include="DirectedSimpleGraph.h" />
-    <ClInclude Include="Edge.h" />
     <ClInclude Include="GraphUtils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -58,7 +58,7 @@ void DirectedSimpleGraph::RemoveEdge(vertex u, vertex v) noexcept(false)
 		throw new invalid_argument("One or both vertices doesn't exists in graph!");
 	}
 }
-
+// Consider const here
 list<int> DirectedSimpleGraph::GetAdjList(vertex u) noexcept(false)
 {
 	list<vertex> vertexAdjacenyList;
@@ -88,6 +88,12 @@ int DirectedSimpleGraph::GetNumEdges() const
 bool DirectedSimpleGraph::isValidVertex(vertex v)
 {
 	return (1 <= v && v <= numVertices);
+}
+
+void DirectedSimpleGraph::AddSingleVertex()
+{
+	AdjacencyList.push_back(list<vertex>());
+	numVertices++;
 }
 
 DirectedSimpleGraph::DirectedSimpleGraph(int n) : numVertices(n), numEdges(0), AdjacencyList(n) {}

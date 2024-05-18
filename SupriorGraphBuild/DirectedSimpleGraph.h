@@ -2,8 +2,9 @@
 #include <list>
 #include <vector>
 #include <iostream>
-#include "Edge.h"
 using namespace std;
+
+typedef int vertex;
 
 class DirectedSimpleGraph
 {
@@ -15,6 +16,7 @@ public:
     list<vertex> GetAdjList(vertex u) noexcept(false);
     int GetNumVertices() const;
     int GetNumEdges() const;
+    void AddSingleVertex();
 
 private:
     int numVertices;
