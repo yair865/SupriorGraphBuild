@@ -1,59 +1,106 @@
 #include "GraphUtils.h"
 using namespace std;
 
+int GraphUtils::s_SuperiorGraphNumberOfVertices = 0;
+int GraphUtils::s_SuperiorGraphNumberOfEdges = 0;
+
 DirectedSimpleGraph* GraphUtils::GenerateSuperiorGraph(DirectedSimpleGraph* i_GraphToCreateFrom)
 {
-	int numberOfVetices = i_GraphToCreateFrom->GetNumVertices();
-	DirectedSimpleGraph* superiorGraphResult = DirectedSimpleGraph::MakeEmptyGraph(numberOfVetices);
+	int numberOfVertices = i_GraphToCreateFrom->GetNumVertices();
+	int numberOfSCC = 0;
+	vector<vertex> verticesRoot(numberOfVertices);
+	vector<eColors> verticesColor;
+	stack<vertex>* reversedEndList = DFSWithEndListAndParents(i_GraphToCreateFrom, verticesRoot, numberOfSCC);
+	DirectedSimpleGraph* superiorGraphResult = DirectedSimpleGraph::MakeEmptyGraph(numberOfSCC);
 	DirectedSimpleGraph* inputGraphTransposed = CreateTransposedGraph(i_GraphToCreateFrom);
-
-	s_ReversedEndListOfGraph = (CreateEndListWithDFS(i_GraphToCreateFrom)).reverse;
-	s_CurrentGraph = i_GraphToCreateFrom;
-	s_VerticesColorArray.resize(numberOfVetices);
-	s_Parents.resize(numberOfVetices);
 	
-	for (vertex u : s_VerticesColorArray)
-	{
-		s_VerticesColorArray[u] = eColors::WHITE;
-	}
-
-	s_CurrentGraph = std::move(inputGraphTransposed);
+	verticesColor.resize(numberOfVertices, eColors::WHITE);
 	
-	for (vertex u : s_ReversedEndListOfGraph)
+	// Main-loop
+	while(!(reversedEndList->empty()))
 	{
+		vertex u = reversedEndList->top();
+		reversedEndList->pop();
+
 		if (s_VerticesColorArray[u] == eColors::WHITE)
 		{
-			s_CurrentRoot = u;
-			visitDFS(u);
+			visitSCCDFS(u, verticesColor, verticesRoot, *superiorGraphResult);
 		}
 	}
 }
 
-void GraphUtils::visitDFS(vertex u)
+void GraphUtils::visitSCCDFS(vertex u, vector<eColors>& i_VerticesColor, vector<vertex>& i_VerticesRoot, DirectedSimpleGraph& io_SuperiorGraphInBuild)
 {
-	s_VerticesColorArray[u] = eColors::GRAY;
+	i_VerticesColor[u] = eColors::GRAY;
 	list<vertex> inputVertexAdjacentList = s_CurrentGraph->GetAdjList(u);
+	list<vertex> currentSCCAdjacentList;
 
 	for (vertex v : inputVertexAdjacentList)
 	{
-		if (!(s_CurrentGraph->GetEdge(u, v).IsVisited()))
+		if (i_VerticesColor[v] == eColors::WHITE)
 		{
-			if (s_VerticesColorArray[v] == eColors::WHITE)
+			visitSCCDFS(v, i_VerticesColor, i_VerticesRoot, io_SuperiorGraphInBuild);
+		}
+		else if (i_VerticesColor[v] == eColors::BLACK)
+		{
+			if (i_VerticesRoot[u] != i_VerticesRoot[v])
 			{
-				s_CurrentGraph->GetEdge(u, v).SetVisitStatus(true);
-				s_Parents[v] = u;
-				visitDFS(v);
+				if ()
+				{
+
+				}
 			}
 		}
 	}
 
-	s_VerticesColorArray[u] = eColors::BLACK;
+	i_VerticesColor[u] = eColors::BLACK;
+	i_ResultEndList.push(u);
+}
+
+stack<vertex>* GraphUtils::DFSWithEndListAndParents(DirectedSimpleGraph* i_GraphToActivateDFSOn, vector<vertex>& o_VerticesRoot, int& o_NumberOfSCC)
+{
+	vector<eColors> verticesColor;
+	int numberOfVertices = i_GraphToActivateDFSOn->GetNumVertices();
+	stack<vertex>* endListResult = new stack<vertex>();
+
+	// Initializing
+	verticesColor.resize(numberOfVertices, eColors::WHITE);
+
+	// Main-loop
+	for(vertex u = 0; u < numberOfVertices; u++)
+	{
+		if (verticesColor[u] == eColors::WHITE)
+		{
+			o_NumberOfSCC++;
+			visitDFSEndListParents(u, verticesColor, *endListResult, o_VerticesRoot, u);
+		}
+	}
+
+	return endListResult;
+}
+
+void GraphUtils::visitDFSEndListParents(vertex u, vector<eColors>& i_VerticesColor, stack<vertex>& i_ResultEndList, vector<vertex>& o_VerticesRoot, vertex i_CurrentRoot)
+{
+	list<vertex> inputVertexAdjacentList = s_CurrentGraph->GetAdjList(u);
+
+	i_VerticesColor[u] = eColors::GRAY;
+	o_VerticesRoot[u] = i_CurrentRoot;
+
+	for (vertex v : inputVertexAdjacentList)
+	{
+		if (i_VerticesColor[v] == eColors::WHITE)
+		{
+			visitDFSEndListParents(v, i_VerticesColor, i_ResultEndList, o_VerticesRoot, i_CurrentRoot);
+		}
+	}
+
+	i_VerticesColor[u] = eColors::BLACK;
+	i_ResultEndList.push(u);
 }
 
 DirectedSimpleGraph* GraphUtils::CreateTransposedGraph(DirectedSimpleGraph* i_GraphToTranspose)
 {
 	int numberOfVertices = i_GraphToTranspose->GetNumVertices();
-	vector<list<vertex>> graphAdjacencyList = std::move(i_GraphToTranspose->GetAdjacencyVector());
 	DirectedSimpleGraph* trasposedGraph = DirectedSimpleGraph::MakeEmptyGraph(numberOfVertices);
 	list<vertex> currentVertexNeighbors;
 
@@ -72,3 +119,4 @@ DirectedSimpleGraph* GraphUtils::CreateTransposedGraph(DirectedSimpleGraph* i_Gr
 
 	return trasposedGraph;
 }
+

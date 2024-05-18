@@ -1,29 +1,26 @@
 #pragma once
-
-using namespace std;
 #include <list>
 #include <vector>
 #include <iostream>
 #include "Edge.h"
+using namespace std;
 
 class DirectedSimpleGraph
 {
 public:
-    bool IsAdjacent(vertex u, vertex v);
-    void AddEdge(vertex u, vertex v);
-    void RemoveEdge(vertex u, vertex v);
     static DirectedSimpleGraph* MakeEmptyGraph(int n);
-    //Getters
+    bool IsAdjacent(vertex u, vertex v) noexcept(false);
+    void AddEdge(vertex u, vertex v) noexcept(false);
+    void RemoveEdge(vertex u, vertex v) noexcept(false);
+    list<vertex> GetAdjList(vertex u) noexcept(false);
     int GetNumVertices() const;
     int GetNumEdges() const;
-    vector<list<vertex>> GetAdjacencyVector() const;
-    Edge GetEdge(vertex u, vertex v);
-    list<vertex> GetAdjList(vertex u);
 
 private:
     int numVertices;
     int numEdges;
     vector<list<vertex>> AdjacencyList;
 
+    bool isValidVertex(vertex v);
     DirectedSimpleGraph(int n);
 };

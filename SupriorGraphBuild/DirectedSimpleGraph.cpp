@@ -6,62 +6,88 @@ DirectedSimpleGraph* DirectedSimpleGraph::MakeEmptyGraph(int n)
 	return (new DirectedSimpleGraph(n));
 }
 
-DirectedSimpleGraph::DirectedSimpleGraph(int n) :numVertices(n), numEdges(0), AdjacencyList(n) {}
-
-bool DirectedSimpleGraph::IsAdjacent(vertex u, vertex v)
+bool DirectedSimpleGraph::IsAdjacent(vertex u, vertex v) noexcept(false)
 {
-	if (u >= 1 && u <= numVertices && v >= 1 && v <= numVertices) {
-		const std::list<vertex>& neighbors = AdjacencyList[u - 1];
-		return std::find(neighbors.begin(), neighbors.end(), v) != neighbors.end();
+	bool verticesAdjacent = false;
+
+	if (isValidVertex(u) && isValidVertex(v))
+	{
+		list<vertex> neighbors = AdjacencyList[u - 1];
+
+		verticesAdjacent = find(neighbors.begin(), neighbors.end(), v) != neighbors.end();
 	}
-	return false;
+	else
+	{
+		throw new invalid_argument("One or both vertices doesn't exists in graph!");
+	}
+
+	return verticesAdjacent;
 }
 
-void DirectedSimpleGraph::AddEdge(vertex u, vertex v)
+void DirectedSimpleGraph::AddEdge(vertex u, vertex v) noexcept(false)
 {
-	if (u >= 1 && u <= numVertices && v >= 1 && v <= numVertices && u != v) {
-		if (!IsAdjacent(u, v)) {
+	if (isValidVertex(u) && isValidVertex(v) && (u != v))
+	{
+		if (!IsAdjacent(u, v)) 
+		{
 			AdjacencyList[u - 1].push_back(v);
 			numEdges++;
 		}
 	}
+	else
+	{
+		throw new invalid_argument("Invalid vertices!");
+	}
 }
 
-void DirectedSimpleGraph::RemoveEdge(vertex u, vertex v)
+void DirectedSimpleGraph::RemoveEdge(vertex u, vertex v) noexcept(false)
 {
-	if (u >= 1 && u <= numVertices && v >= 1 && v <= numVertices) {
-		auto& neighbors = AdjacencyList[u - 1];
-		auto it = std::find(neighbors.begin(), neighbors.end(), v);
-		if (it != neighbors.end()) {
+	if (isValidVertex(u) && isValidVertex(v))
+	{
+		list<vertex> neighbors = AdjacencyList[u - 1];
+		auto it = find(neighbors.begin(), neighbors.end(), v);
+
+		if (it != neighbors.end()) 
+		{
 			neighbors.erase(it);
 			numEdges--;
 		}
 	}
+	else
+	{
+		throw new invalid_argument("One or both vertices doesn't exists in graph!");
+	}
 }
 
-int DirectedSimpleGraph::GetNumVertices() const {return numVertices;}
-
-int DirectedSimpleGraph::GetNumEdges() const {return numEdges;}
-
-list<int> DirectedSimpleGraph::GetAdjList(vertex u)
+list<int> DirectedSimpleGraph::GetAdjList(vertex u) noexcept(false)
 {
-	//try
-	//{
-	//	if (u >= 1 && u <= numVertices)
-	//		return AdjacencyList[u - 1];
-	//	throw(u);
-	//}
-	//catch (int u)
-	//{
-	//	cout << "Vertex doesnt exist!";
-	//	return std::list<int>();
-	//}
-	 
-		if (u >= 1 && u <= numVertices)
-			return AdjacencyList[u - 1];
-		else
-		{
-			cout << "Vertex doesnt exist!";
-			exit(1);
-		}
+	list<vertex> vertexAdjacenyList;
+
+	if (isValidVertex(u))
+	{
+		vertexAdjacenyList = AdjacencyList[u - 1];
+	}
+	else
+	{
+		throw new invalid_argument("Invalid vertex!");
+	}
+
+	return vertexAdjacenyList;
 }
+
+int DirectedSimpleGraph::GetNumVertices() const 
+{
+	return numVertices;
+}
+
+int DirectedSimpleGraph::GetNumEdges() const 
+{
+	return numEdges;
+}
+
+bool DirectedSimpleGraph::isValidVertex(vertex v)
+{
+	return (1 <= v && v <= numVertices);
+}
+
+DirectedSimpleGraph::DirectedSimpleGraph(int n) : numVertices(n), numEdges(0), AdjacencyList(n) {}
