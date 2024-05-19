@@ -4,7 +4,7 @@ using namespace std;
 DirectedSimpleGraph* GraphUtils::GenerateCondensationGraph(DirectedSimpleGraph* i_GraphToCreateFrom)
 {
 	int numberOfVertices = i_GraphToCreateFrom->GetNumVertices();
-	int numberOfSCC = 0;
+	vertex currentStronglyConnectedComponent = 0;
 	vector<vertex> verticesComponent(numberOfVertices);
 	vector<eColors> verticesColor;
 	DirectedSimpleGraph* condensationGraphResult = DirectedSimpleGraph::MakeEmptyGraph(EMPTY);
@@ -22,9 +22,9 @@ DirectedSimpleGraph* GraphUtils::GenerateCondensationGraph(DirectedSimpleGraph* 
 		if (verticesColor[u] == eColors::WHITE)
 		{
 			condensationGraphResult->AddSingleVertex();
-			verticesComponent[u] = numberOfSCC;
-			visitSCCDFS(u, transposedGraph, verticesColor, numberOfSCC, verticesComponent, *condensationGraphResult);
-			numberOfSCC++;
+			verticesComponent[u] = currentStronglyConnectedComponent;
+			visitSCCDFS(u, transposedGraph, verticesColor, currentStronglyConnectedComponent, verticesComponent, *condensationGraphResult);
+			currentStronglyConnectedComponent++;
 		}
 	}
 }
