@@ -12,7 +12,7 @@ bool DirectedSimpleGraph::IsAdjacent(vertex u, vertex v) noexcept(false)
 
 	if (isValidVertex(u) && isValidVertex(v))
 	{
-		list<vertex> neighbors = AdjacencyList[u - 1];
+		list<vertex> neighbors = m_AdjacencyList[u];
 
 		verticesAdjacent = find(neighbors.begin(), neighbors.end(), v) != neighbors.end();
 	}
@@ -30,8 +30,8 @@ void DirectedSimpleGraph::AddEdge(vertex u, vertex v) noexcept(false)
 	{
 		if (!IsAdjacent(u, v)) 
 		{
-			AdjacencyList[u - 1].push_back(v - 1);
-			numEdges++;
+			m_AdjacencyList[u].push_back(v);
+			m_NumEdges++;
 		}
 	}
 	else
@@ -44,13 +44,13 @@ void DirectedSimpleGraph::RemoveEdge(vertex u, vertex v) noexcept(false)
 {
 	if (isValidVertex(u) && isValidVertex(v))
 	{
-		list<vertex> neighbors = AdjacencyList[u - 1];
+		list<vertex> neighbors = m_AdjacencyList[u];
 		auto it = find(neighbors.begin(), neighbors.end(), v);
 
 		if (it != neighbors.end()) 
 		{
 			neighbors.erase(it);
-			numEdges--;
+			m_NumEdges--;
 		}
 	}
 	else
@@ -65,7 +65,7 @@ list<int> DirectedSimpleGraph::GetAdjList(vertex u) noexcept(false)
 
 	if (isValidVertex(u))
 	{
-		vertexAdjacenyList = AdjacencyList[u - 1];
+		vertexAdjacenyList = m_AdjacencyList[u];
 	}
 	else
 	{
@@ -77,23 +77,24 @@ list<int> DirectedSimpleGraph::GetAdjList(vertex u) noexcept(false)
 
 int DirectedSimpleGraph::GetNumVertices() const 
 {
-	return numVertices;
+	return m_NumVerticesLogical;
 }
 
 int DirectedSimpleGraph::GetNumEdges() const 
 {
-	return numEdges;
+	return m_NumEdges;
 }
 
 bool DirectedSimpleGraph::isValidVertex(vertex v)
 {
-	return (1 <= v && v <= numVertices);
+	return (1 <= v && v <= m_NumVerticesLogical);
 }
 
 void DirectedSimpleGraph::AddSingleVertex()
 {
-	AdjacencyList.push_back(list<vertex>());
-	numVertices++;
+	m_AdjacencyList.push_back(list<vertex>());
+	m_NumVerticesPhysical++;
+	m_NumVerticesLogical++;
 }
 
-DirectedSimpleGraph::DirectedSimpleGraph(int n) : numVertices(n), numEdges(0), AdjacencyList(n) {}
+DirectedSimpleGraph::DirectedSimpleGraph(int n) : m_NumVerticesLogical(n), m_NumVerticesPhysical(n + 1), m_NumEdges(0), m_AdjacencyList(n + 1) {}

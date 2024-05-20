@@ -4,14 +4,14 @@ using namespace std;
 DirectedSimpleGraph* GraphUtils::GenerateCondensationGraph(DirectedSimpleGraph* i_GraphToCreateFrom)
 {
 	int numberOfVertices = i_GraphToCreateFrom->GetNumVertices();
-	vertex currentStronglyConnectedComponent = 0;
-	vector<vertex> verticesComponent(numberOfVertices);
+	vertex currentStronglyConnectedComponent = 1;
+	vector<vertex> verticesComponent(numberOfVertices + 1);
 	vector<eColors> verticesColor;
 	DirectedSimpleGraph* condensationGraphResult = DirectedSimpleGraph::MakeEmptyGraph(EMPTY);
 	stack<vertex>* reversedEndList = EndListDFS(i_GraphToCreateFrom);
 	DirectedSimpleGraph* transposedGraph = CreateTransposedGraph(i_GraphToCreateFrom);
 	
-	verticesColor.resize(numberOfVertices, eColors::WHITE);
+	verticesColor.resize(numberOfVertices + 1, eColors::WHITE);
 	
 	// Main-loop
 	while(!(reversedEndList->empty()))
@@ -49,10 +49,11 @@ void GraphUtils::visitSCCDFS(vertex u, DirectedSimpleGraph* i_TransposedGraph, v
 		}
 		else if ((i_VerticesColor[v] == eColors::BLACK) && (i_VerticesComponentsBelonging[u] != i_VerticesComponentsBelonging[v]))
 		{
+			currentSCCAdjacentList = io_SuperiorGraphInBuild.GetAdjList(i_CurrentComponent);
 			u_Component = i_VerticesComponentsBelonging[u];
 			v_Component = i_VerticesComponentsBelonging[v];
 
-			if (io_SuperiorGraphInBuild.GetAdjList(v).back() != u_Component)
+			if ((currentSCCAdjacentList.size() == 0) || (currentSCCAdjacentList.back() != u_Component))
 			{
 				io_SuperiorGraphInBuild.AddEdge(v_Component, u_Component);
 			}
@@ -69,14 +70,14 @@ stack<vertex>* GraphUtils::EndListDFS(DirectedSimpleGraph* i_GraphToActivateOn)
 	stack<vertex>* endListResult = new stack<vertex>();
 
 	// Initializing
-	verticesColor.resize(numberOfVertices, eColors::WHITE);
+	verticesColor.resize(numberOfVertices + 1, eColors::WHITE);
 
 	// Main-loop
-	for(vertex u = 0; u < numberOfVertices; u++)
+	for(vertex u = 1; u <= numberOfVertices; u++)
 	{
 		if (verticesColor[u] == eColors::WHITE)
 		{
-			visitEndListDFS((u + 1), i_GraphToActivateOn, verticesColor, *endListResult);
+			visitEndListDFS(u, i_GraphToActivateOn, verticesColor, *endListResult);
 		}
 	}
 
@@ -93,7 +94,7 @@ void GraphUtils::visitEndListDFS(vertex u, DirectedSimpleGraph* i_GraphToActivat
 	{
 		if (i_VerticesColor[v] == eColors::WHITE)
 		{
-			visitEndListDFS(v + 1, i_GraphToActivateOn, i_VerticesColor, i_ResultEndList);
+			visitEndListDFS(v, i_GraphToActivateOn, i_VerticesColor, i_ResultEndList);
 		}
 	}
 
@@ -107,13 +108,13 @@ DirectedSimpleGraph* GraphUtils::CreateTransposedGraph(DirectedSimpleGraph* i_Gr
 	DirectedSimpleGraph* trasposedGraph = DirectedSimpleGraph::MakeEmptyGraph(numberOfVertices);
 	list<vertex> currentVertexNeighbors;
 
-	for (vertex v = 1 ; v <= numberOfVertices ; v++)
+	for (vertex u = 1 ; u <= numberOfVertices ; u++)
 	{
-		currentVertexNeighbors = i_GraphToTranspose->GetAdjList(v);
+		currentVertexNeighbors = i_GraphToTranspose->GetAdjList(u);
 
 		if (currentVertexNeighbors.size() != 0)
 		{
-			for (vertex u : currentVertexNeighbors)
+			for (vertex v : currentVertexNeighbors)
 			{
 				trasposedGraph->AddEdge(v, u);
 			}

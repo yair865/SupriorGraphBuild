@@ -19,9 +19,10 @@ public:
     void AddSingleVertex();
 
 private:
-    int numVertices;
-    int numEdges;
-    vector<list<vertex>> AdjacencyList;
+    int m_NumVerticesPhysical;
+    int m_NumVerticesLogical;
+    int m_NumEdges;
+    vector<list<vertex>> m_AdjacencyList;
 
     bool isValidVertex(vertex v);
     DirectedSimpleGraph(int n);
