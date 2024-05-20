@@ -18,7 +18,7 @@ bool DirectedSimpleGraph::IsAdjacent(vertex u, vertex v) noexcept(false)
 	}
 	else
 	{
-		throw new invalid_argument("One or both vertices doesn't exists in graph!");
+		throw invalid_argument("One or both vertices doesn't exists in graph!");
 	}
 
 	return verticesAdjacent;
@@ -30,13 +30,13 @@ void DirectedSimpleGraph::AddEdge(vertex u, vertex v) noexcept(false)
 	{
 		if (!IsAdjacent(u, v)) 
 		{
-			AdjacencyList[u - 1].push_back(v);
+			AdjacencyList[u - 1].push_back(v - 1);
 			numEdges++;
 		}
 	}
 	else
 	{
-		throw new invalid_argument("Invalid vertices!");
+		throw invalid_argument("Invalid vertices!");
 	}
 }
 
@@ -69,7 +69,7 @@ list<int> DirectedSimpleGraph::GetAdjList(vertex u) noexcept(false)
 	}
 	else
 	{
-		throw new invalid_argument("Invalid vertex!");
+		throw invalid_argument("Invalid vertex!");
 	}
 
 	return vertexAdjacenyList;

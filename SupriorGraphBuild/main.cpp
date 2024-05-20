@@ -1,6 +1,8 @@
-#include "DirectedSimpleGraph.h"
+#include "ConsoleUI.h"
 
 int main()
 {
-		return 0;
+	ConsoleUI programUI;
+
+	programUI.ExecuteCondensationGraphProgram();
 }

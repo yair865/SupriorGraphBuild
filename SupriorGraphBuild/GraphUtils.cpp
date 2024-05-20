@@ -27,15 +27,18 @@ DirectedSimpleGraph* GraphUtils::GenerateCondensationGraph(DirectedSimpleGraph* 
 			currentStronglyConnectedComponent++;
 		}
 	}
+
+	return condensationGraphResult;
 }
 
 void GraphUtils::visitSCCDFS(vertex u, DirectedSimpleGraph* i_TransposedGraph, vector<eColors>& i_VerticesColor, vertex i_CurrentComponent, 
 								vector<vertex>& i_VerticesComponentsBelonging, DirectedSimpleGraph& io_SuperiorGraphInBuild)
 {
-	i_VerticesColor[u] = eColors::GRAY;
 	list<vertex> inputVertexAdjacentList = i_TransposedGraph->GetAdjList(u);
 	list<vertex> currentSCCAdjacentList;
 	vertex u_Component, v_Component;
+
+	i_VerticesColor[u] = eColors::GRAY;
 
 	for (vertex v : inputVertexAdjacentList)
 	{
@@ -73,7 +76,7 @@ stack<vertex>* GraphUtils::EndListDFS(DirectedSimpleGraph* i_GraphToActivateOn)
 	{
 		if (verticesColor[u] == eColors::WHITE)
 		{
-			visitEndListDFS(u, i_GraphToActivateOn, verticesColor, *endListResult);
+			visitEndListDFS((u + 1), i_GraphToActivateOn, verticesColor, *endListResult);
 		}
 	}
 
@@ -90,7 +93,7 @@ void GraphUtils::visitEndListDFS(vertex u, DirectedSimpleGraph* i_GraphToActivat
 	{
 		if (i_VerticesColor[v] == eColors::WHITE)
 		{
-			visitEndListDFS(v, i_GraphToActivateOn, i_VerticesColor, i_ResultEndList);
+			visitEndListDFS(v + 1, i_GraphToActivateOn, i_VerticesColor, i_ResultEndList);
 		}
 	}
 
@@ -104,7 +107,7 @@ DirectedSimpleGraph* GraphUtils::CreateTransposedGraph(DirectedSimpleGraph* i_Gr
 	DirectedSimpleGraph* trasposedGraph = DirectedSimpleGraph::MakeEmptyGraph(numberOfVertices);
 	list<vertex> currentVertexNeighbors;
 
-	for (vertex v = 0 ; v < numberOfVertices ; v++)
+	for (vertex v = 1 ; v <= numberOfVertices ; v++)
 	{
 		currentVertexNeighbors = i_GraphToTranspose->GetAdjList(v);
 
