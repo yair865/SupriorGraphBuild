@@ -1,19 +1,22 @@
 #include "ConsoleUI.h"
 using namespace std;
 
-
+// This method recieves information about a graph from the user, generates it, generates the condesation graph of the input graph
+// and prints the number of vertices and edges in the condesation of the graph
 void ConsoleUI::ExecuteCondensationGraphProgram()
 {
 	int n, m;
 	DirectedSimpleGraph* userCondesationGraph;
 
-	getInputFromUser(n, m);
+	getAndCreateUserInputGraph(n, m);
 	userCondesationGraph = GraphUtils::GenerateCondensationGraph(m_UserInputGraph);
 	cout << userCondesationGraph->GetNumVertices() << " " << userCondesationGraph->GetNumEdges();
 
+	delete userCondesationGraph;
 }
 
-void ConsoleUI::getInputFromUser(int& o_NumberOfVertices, int& io_NumberOfEdges)
+// This method recieves information about a graph from the user and creates it
+void ConsoleUI::getAndCreateUserInputGraph(int& o_NumberOfVertices, int& io_NumberOfEdges)
 {
 	vertex u, v;
 
@@ -22,8 +25,7 @@ void ConsoleUI::getInputFromUser(int& o_NumberOfVertices, int& io_NumberOfEdges)
 
 	if (o_NumberOfVertices < 1)
 	{
-		cout << "Invalid input!";
-		exit(1);
+		exitProgram();
 	}
 	
 	m_UserInputGraph = DirectedSimpleGraph::MakeEmptyGraph(o_NumberOfVertices);
@@ -33,8 +35,7 @@ void ConsoleUI::getInputFromUser(int& o_NumberOfVertices, int& io_NumberOfEdges)
 
 	if (io_NumberOfEdges < 1)
 	{
-		cout << "Invalid input!";
-		exit(1);
+		exitProgram();
 	}
 
 	try
@@ -50,16 +51,38 @@ void ConsoleUI::getInputFromUser(int& o_NumberOfVertices, int& io_NumberOfEdges)
 	catch (const invalid_argument& e)
 	{
 		cout << e.what();
-		exit(1);
+		exitProgram();
 	}
 	catch (const exception& e)
 	{
 		cout << e.what();
-		exit(1);
+		exitProgram();
 	}
 	catch (...)
 	{
-		cout << "Error";
-		exit(1);
+		cout << "Error!";
+		exitProgram();
+	}
+}
+
+// This method exits the program
+void ConsoleUI::exitProgram()
+{
+	cout << "Invalid input!";
+
+	if (m_UserInputGraph != nullptr)
+	{
+		delete m_UserInputGraph;
+	}
+
+	exit(1);
+}
+
+// The destructor the the class
+ConsoleUI::~ConsoleUI()
+{
+	if (m_UserInputGraph != nullptr)
+	{
+		delete m_UserInputGraph;
 	}
 }

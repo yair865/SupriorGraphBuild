@@ -130,7 +130,7 @@
     <ClCompile Include="ConsoleUI.cpp" />
     <ClCompile Include="DirectedSimpleGraph.cpp" />
     <ClCompile Include="GraphUtils.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleUI.h" />

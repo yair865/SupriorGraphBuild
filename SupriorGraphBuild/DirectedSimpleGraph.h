@@ -13,7 +13,7 @@ public:
     bool IsAdjacent(vertex u, vertex v) noexcept(false);
     void AddEdge(vertex u, vertex v) noexcept(false);
     void RemoveEdge(vertex u, vertex v) noexcept(false);
-    list<vertex> GetAdjList(vertex u) noexcept(false);
+    const list<vertex> GetAdjList(vertex u) const noexcept(false);
     int GetNumVertices() const;
     int GetNumEdges() const;
     void AddSingleVertex();
@@ -24,6 +24,6 @@ private:
     int m_NumEdges;
     vector<list<vertex>> m_AdjacencyList;
 
-    bool isValidVertex(vertex v);
+    bool isValidVertex(vertex v) const;
     DirectedSimpleGraph(int n);
 };

@@ -2,7 +2,7 @@
 #include "DirectedSimpleGraph.h"
 #include <stack>
 
-#define EMPTY 0
+#define EMPTY_GRAPH 0
 
 class GraphUtils
 {
