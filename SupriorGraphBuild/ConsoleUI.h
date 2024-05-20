@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "GraphUtils.h"
 
+
 class ConsoleUI
 {
 public:
@@ -14,4 +15,5 @@ private:
 
 	void getAndCreateUserInputGraph(int& o_NumberOfVertices, int& io_NumberOfEdges);
 	void exitProgram();
+	
 };

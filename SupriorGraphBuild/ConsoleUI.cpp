@@ -23,7 +23,7 @@ void ConsoleUI::getAndCreateUserInputGraph(int& o_NumberOfVertices, int& io_Numb
 	cout << "Please enter the number of vertices in the graph: " << endl;
 	cin >> o_NumberOfVertices;
 
-	if (o_NumberOfVertices < 1)
+	if (o_NumberOfVertices < 0)
 	{
 		exitProgram();
 	}
@@ -33,7 +33,7 @@ void ConsoleUI::getAndCreateUserInputGraph(int& o_NumberOfVertices, int& io_Numb
 	cout << "Please enter the number of edges in the graph: " << endl;
 	cin >> io_NumberOfEdges;
 
-	if (io_NumberOfEdges < 1)
+	if (io_NumberOfEdges < 0)
 	{
 		exitProgram();
 	}
@@ -50,17 +50,17 @@ void ConsoleUI::getAndCreateUserInputGraph(int& o_NumberOfVertices, int& io_Numb
 	}
 	catch (const invalid_argument& e)
 	{
-		cout << e.what();
+		cout << e.what() << endl;
 		exitProgram();
 	}
 	catch (const exception& e)
 	{
-		cout << e.what();
+		cout << e.what() << endl;
 		exitProgram();
 	}
 	catch (...)
 	{
-		cout << "Error!";
+		cout << "Error!" << endl;
 		exitProgram();
 	}
 }

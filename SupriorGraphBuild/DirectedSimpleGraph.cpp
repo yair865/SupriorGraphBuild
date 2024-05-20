@@ -39,7 +39,7 @@ void DirectedSimpleGraph::AddEdge(vertex u, vertex v) noexcept(false)
 	}
 	else
 	{
-		if (u != v)
+		if (u == v)
 		{
 			throw invalid_argument("Can't add a loop edge!");
 		}
